@@ -1,0 +1,14 @@
+{
+  "name": "chatApp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:arcinech/chatApp.git",
+  "author": "Marcin Lech <arcinech@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
