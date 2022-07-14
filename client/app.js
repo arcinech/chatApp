@@ -27,17 +27,18 @@ const addMessage = (user, message) => {
 
 //socket listeners
 socket.on('message', ({author, message}) => addMessage(author, message));
-
+socket.on('newUser'), ({author}) => addMessage('Chat Bot', `User: ${author} joined chat!`);
 // Event listeners
 loginForm.addEventListener('submit', e => {
   e.preventDefault();
 
-  const loginInput = document.getElementById('username').value;
-  if(!loginInput) return alert('Please enter username');
-
-  userName = loginInput;
+  const loginInput = document.getElementById('username');
+  if(!loginInput.value) return alert('Please enter username');
+  userName=loginInput.value;
   loginForm.classList.remove('show');
   messagesSection.classList.add('show');
+  socket.emit('join', {user: userName});
+  loginInput.value = '';
 });
 
 addMessagesForm.addEventListener('submit', e => { 

@@ -1,3 +1,6 @@
-const messages = [];
+const db = {
+  messages: [],
+  users: [],
+};
 
-module.exports = messages;
+module.exports = db;
