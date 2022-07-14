@@ -8,8 +8,11 @@ const messagesList = document.getElementById('messages-list');
 const addMessagesForm = document.getElementById('add-messages-form');
 const messageContentInput = document.getElementById('message-content');
 
+const socket = io();
+
 //functions
 const addMessage = (user, message) => {
+  console.log(user);
   const li = document.createElement('li');
   li.classList.add('message');
   li.classList.add('message--received');
@@ -22,21 +25,35 @@ const addMessage = (user, message) => {
   messagesList.appendChild(li);
 }
 
+//socket listeners
+socket.on('message', ({author, message}) => addMessage(author, message));
+socket.on('newuser', ({user}) => {
+  addMessage('Chat Bot', `${user} has joined chat!`)
+});
+
+socket.on('userLeft', ({user}) => {
+  addMessage('Chat Bot', `${user} has left the chat!`)
+});
+
 // Event listeners
 loginForm.addEventListener('submit', e => {
   e.preventDefault();
 
-  const loginInput = document.getElementById('username').value;
-  if(!loginInput) return alert('Please enter username');
-
-  userName = loginInput.value;
+  const loginInput = document.getElementById('username');
+  if(!loginInput.value) return alert('Please enter username');
+  userName=loginInput.value;
   loginForm.classList.remove('show');
   messagesSection.classList.add('show');
+  socket.emit('join', userName);
+  socket.emit('newuser', username);
+  loginInput.value = '';
 });
 
 addMessagesForm.addEventListener('submit', e => { 
   e.preventDefault();
-  console.log(messageContentInput);
-  if(!messageContentInput.value) return alert('Please write message');
+  let messageContent = messageContentInput.value;
+  if(!messageContent.length) return alert('Please write message');
   addMessage(userName, messageContentInput.value);
-})
+  socket.emit('message', {author: userName, message: messageContent});
+  messageContentInput.value = '';
+});
