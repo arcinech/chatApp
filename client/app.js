@@ -27,7 +27,14 @@ const addMessage = (user, message) => {
 
 //socket listeners
 socket.on('message', ({author, message}) => addMessage(author, message));
-socket.on('newUser'), ({author}) => addMessage('Chat Bot', `User: ${author} joined chat!`);
+socket.on('newuser', ({user}) => {
+  addMessage('Chat Bot', `${user} has joined chat!`)
+});
+
+socket.on('userLeft', ({user}) => {
+  addMessage('Chat Bot', `${user} has left the chat!`)
+});
+
 // Event listeners
 loginForm.addEventListener('submit', e => {
   e.preventDefault();
@@ -37,7 +44,8 @@ loginForm.addEventListener('submit', e => {
   userName=loginInput.value;
   loginForm.classList.remove('show');
   messagesSection.classList.add('show');
-  socket.emit('join', {user: userName});
+  socket.emit('join', userName);
+  socket.emit('newuser', username);
   loginInput.value = '';
 });
 

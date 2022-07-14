@@ -25,26 +25,22 @@ app.use((req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('New client! Its id – ' + socket.id);
+
   socket.on('message', (message) =>
    { 
-    console.log('Oh, I\'ve got something from ' + socket.id);
     db.messages.push(message);
     socket.broadcast.emit('message', message);
-    console.log(db.messages);
     });
 
-  socket.on('join', ({user}) => {
-    console.log(user)
-    console.log('User: ' + user + 'logged with id: '+ socket.id)
-    db.messages.push({author: 'ChatBot', message: `User: ${user} joined chat!`});
+  socket.on('join', (user) => {
     db.users.push({author: user, id: socket.id});
-    socket.broadcast.emit('newUser', user);
+    socket.broadcast.emit('newuser', {user: user});
   });
 
   socket.on('disconnect', () => {
-    console.log('User with id:' + socket.id + ' disconnected');
-    db.users = db.users.filter(({id, author}) => id !== socket.id);
+    const user = db.users.find(({id}) => id===socket.id);
+    socket.broadcast.emit('userLeft', {user: user.author});
+    db.users = db.users.filter(({id}) => id !== socket.id);
   })
   console.log('I\'ve added a listener on message event \n');
 });
